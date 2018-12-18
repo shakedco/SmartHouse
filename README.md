@@ -12,3 +12,6 @@ The only place where technology touches less is precisely the place that serves 
 
 The project idea is to implements a smart infrastructure that can fit any regular house and allow the house owner to control the devices in there home from the mobile device and receive indication of what is going in the house using a varity of sensors.
 
+
+# Disclaimer
+The project is developed as part of the requirements for BS.C degree software engineering at the software engineering department - Azrieli College of Engineering, Jerusalem, Israel.
