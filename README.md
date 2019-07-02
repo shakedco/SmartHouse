@@ -15,3 +15,5 @@ The project idea is to implements a smart infrastructure that can fit any regula
 
 # Disclaimer
 The project is developed as part of the requirements for BS.C degree software engineering at the <a href="https://www.jce.ac.il/">software engineering department - Azrieli College of Engineering</a>, Jerusalem, Israel.
+# SmartHouse Vedio
+<a href="https://www.youtube.com/watch?v=aqA-SuHMnEU"> Video Link</a>
