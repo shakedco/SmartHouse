@@ -5,7 +5,6 @@ export class SmartHouseDB extends React.Component {
   constructor(props){
         super(props)
         this.myInstance = SQLite.openDatabase('abed.db');
-        // this.DeleteTables()
         this.createTable();
         // this.DisplayTables()
         // this.AddNewHomeSection("קומה ראשונה")
@@ -13,82 +12,28 @@ export class SmartHouseDB extends React.Component {
         //this.DisplayTableColumn('HomeSections')
         // console.log(this.myInstance)
         // console.log(this.GetAllRooms())
-        
       }
       
       
-      
-/**
- * Client Section 
- */
-
- 
-
-
- /**
-  * Edite Section
-  */
     static getInstance() {
       if (SmartHouseDB.myInstance == null) {
         SmartHouseDB.myInstance = new SmartHouseDB();
       }
       return this.myInstance;
     }
-   /*
-  componentDidMount() {
-    // console.log(this.SmartHouseDB)
-    this.SmartHouseDB.transaction(tx => {
-      tx.executeSql(
-        'create table if not exists abed (id integer primary key not null, done int, value text);'
-      );
-    });
-      this.SmartHouseDB.transaction(
-        tx => {
-          
-          tx.executeSql('insert into items (done, value) values (0, ?)', ["abed"]);
-          tx.executeSql("SELECT name FROM sqlite_master;", [], (_, { rows }) =>
-            console.log(JSON.stringify(rows))
-          );
-        },
-        null,
-        
-      );
-    
-  }
-  */
+   
     createTable(){
-      this.myInstance.transaction(tx => {
-
-          //   tx.executeSql('insert into  HomeSections(SectionsName,ImageSrc)values(?,?)', [sectionName,imagePath]);
-            // tx.executeSql(
-            //   'create table if not exists LogInfo (id integer primary key not null , RegisterIndex int , TimeStamp text , HHMMSS text);'
-            // );
-            // tx.executeSql("DROP TABLE HomeSections;");
-            tx.executeSql(
-               'create table if not exists HomeSections (id integer primary key not null, SectionsName text,ImageSrc text);'
-             );
-            // tx.executeSql(
-            //    'create table if not exists Modes (id integer primary key not null, ModeName text,ImageSrc text,ArrPin text);'
-            //  );
-            /*
-            */
-          //  tx.executeSql("DROP TABLE Room;");
-           
-          // tx.executeSql(
-          //   'create table if not exists Room (RoomId integer primary key not null, HomeSectionId int, name text,imageSrc text);'
-          //   );
-            
-            // tx.executeSql("DROP TABLE Devices;");
-        
-            // tx.executeSql(
-            //   'create table if not exists Devices (id integer primary key not null, RoomId int, DeviceName text,DeviceImage text,RegisterIndex integer);'
-            // );
-             
-            //  tx.executeSql(
-            //    'create table if not exists Profile (id integer primary key not null, name int, member text);'
-            //  );
-             
-      });
+      //-------------------------------------------------------------
+      //  * This function create the tables if not declared 
+      //  * This must work in the first run of the application 
+      // -------------------------------------------------------------
+            this.myInstance.transaction(tx => {tx.executeSql('create table if not exists Arduino (id integer primary key not null, ArduinoIp text);')})
+            this.myInstance.transaction(tx => {tx.executeSql('create table if not exists LogInfo (id integer primary key not null , RegisterIndex int , TimeStamp text , HHMMSS text,SecondsNum int);')})
+            this.myInstance.transaction(tx => {tx.executeSql('create table if not exists HomeSections (id integer primary key not null, SectionsName text,ImageSrc text);')})
+            this.myInstance.transaction(tx => {tx.executeSql('create table if not exists Modes (id integer primary key not null, ModeName text,ImageSrc text,ArrPin text);')})
+            this.myInstance.transaction(tx => {tx.executeSql('create table if not exists Room (RoomId integer primary key not null, HomeSectionId int, name text,imageSrc text);')})
+            this.myInstance.transaction(tx => {tx.executeSql('create table if not exists Devices (id integer primary key not null, RoomId int, DeviceName text,DeviceImage text,RegisterIndex integer);')})
+            this.myInstance.transaction(tx => {tx.executeSql('create table if not exists Profile (id integer primary key not null, name int, member text);')})
     }
     RemoveSection(sectionId){
       const query = "DELETE FROM HomeSections WHERE id="+sectionId;
@@ -113,11 +58,13 @@ export class SmartHouseDB extends React.Component {
     }
     DeleteTables(){
       this.myInstance.transaction(tx => {
-        // tx.executeSql("DROP TABLE HomeSections;");
-        // tx.executeSql("DROP TABLE Devices;");
-        // tx.executeSql("DROP TABLE Profile;");
-        // tx.executeSql("DROP TABLE items;");
-        // tx.executeSql("DROP TABLE Room;");
+        this.myInstance.transaction(tx => {tx.executeSql("DROP TABLE HomeSections;")})
+        this.myInstance.transaction(tx => {tx.executeSql("DROP TABLE Devices;")})
+        this.myInstance.transaction(tx => {tx.executeSql("DROP TABLE Profile;")})
+        this.myInstance.transaction(tx => {tx.executeSql("DROP TABLE items;")})
+        this.myInstance.transaction(tx => {tx.executeSql("DROP TABLE LogInfo;")})
+        this.myInstance.transaction(tx => {tx.executeSql("DROP TABLE Arduino;")})
+        this.myInstance.transaction(tx => {tx.executeSql("DROP TABLE Modes;")})
       });
     }
 
@@ -212,6 +159,7 @@ export class SmartHouseDB extends React.Component {
           });
       }))
     }
+    
     GetAllHomeSections(){
       const query = "SELECT * FROM HomeSections";
       return new Promise((resolve, reject) => this.myInstance.transaction((tx) => {
@@ -277,16 +225,10 @@ export class SmartHouseDB extends React.Component {
               tx.executeSql('SELECT * FROM Room', [], (_, {
                   rows
               }) => {
-                  //console.log(rows);
-                  // console.log(rows);
-  
-                  //console.log(parseFloat(rows._array[0].metricheight));
                   profileheight = parseFloat(rows._array);
-                  // console.log('Profileheight ===>' + profileheight);
                   const profileobject = {
                       profileheight
                   };
-                  // console.log(profileobject);
                   return profileobject;
               });
           },
@@ -295,7 +237,24 @@ export class SmartHouseDB extends React.Component {
   }
 
 
-
+  GetLastIp(){
+    const RoomQuery = "SELECT * FROM Arduino ORDER BY id DESC;";
+    return new Promise((resolve, reject) => this.myInstance.transaction((tx) => {
+      tx.executeSql(RoomQuery, [], (tx, results) => {
+          this.totalItems = (results.rows);
+          resolve(this.totalItems._array);
+      }, function (tx, error) {
+          reject(error);
+      });
+  }))
+  }
+  SaveLastArduinoIp(ArduinoIp){
+    this.myInstance.transaction(tx => { 
+      tx.executeSql('insert into Arduino(ArduinoIp)values(?)',[ArduinoIp]);
+    },
+    null,
+    );
+  }
 
   GetDeviceByRoomId(RoomId){
     const RoomQuery = "SELECT * FROM Devices WHERE Devices.RoomId="+RoomId+" ORDER BY RegisterIndex ASC";
@@ -308,12 +267,10 @@ export class SmartHouseDB extends React.Component {
         });
     }))
   }
-
   
-  SaveDeviceLogInfo(deviceRegId,timeStamp,HHMMSS){
-    //id integer primary key not null, RegisterIndex integer,TimeStamp text, HHMMSS text
+  SaveDeviceLogInfo(deviceRegId,timeStamp,HHMMSS,SecondsNum){
     this.myInstance.transaction(tx => { 
-      tx.executeSql('insert into LogInfo(RegisterIndex,TimeStamp,HHMMSS)values(?,?,?)',[deviceRegId,timeStamp,HHMMSS]);
+      tx.executeSql('insert into LogInfo(RegisterIndex,TimeStamp,HHMMSS,SecondsNum)values(?,?,?,?)',[deviceRegId,timeStamp,HHMMSS,SecondsNum]);
     },
     null,
     );
@@ -330,7 +287,7 @@ export class SmartHouseDB extends React.Component {
     }))
   }
   getDeviceLogInfo(){
-    const RoomQuery = "SELECT * FROM LogInfo;";
+    const RoomQuery = "SELECT Devices.id, DeviceName,Room.name as RoomName,Devices.RegisterIndex ,DeviceImage,SUM(SecondsNum) as longTime FROM Devices,Room, LogInfo where Room.RoomId=Devices.RoomId and Devices.RegisterIndex=LogInfo.RegisterIndex GROUP BY Devices.id ;";
     return new Promise((resolve, reject) => this.myInstance.transaction((tx) => {
         tx.executeSql(RoomQuery, [], (tx, results) => {
             this.totalItems = (results.rows);

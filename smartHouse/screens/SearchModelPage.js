@@ -2,19 +2,60 @@ import React, { Component } from 'react';
 import { AppRegistry,StyleSheet, NetInfo, Alert,Text, View,ActivityIndicator } from 'react-native';
 import { Video } from 'expo';
 import { Input,Button} from 'react-native-elements';
+import { Arduino } from '../arduino/Arduino';
+import { SmartHouseDB } from '../DataBase/SmartHouseDB';
 
 export default class SearchModelPage extends React.Component  {
   constructor(props){
     super(props)
     this.state={}
     this.state.isConnected=false;
+    this.componentDidMount=this.componentDidMount.bind(this)
     this.ConnectToArduino=this.ConnectToArduino.bind(this)
-    // console.log(NetInfo.getConnectionInfo().then((result)=>{
-    //   console.log(result)
-    // }))
-    // NetworkInfo.getIPAddress(ip => {
-    //   console.log(ip);
-    // });
+    SmartHouseDB.getInstance().GetLastIp().then((data)=>{
+      if(data.length>0){
+        const arduinoUrl=data[0].ArduinoIp
+        this.AutomaticlyConnect(arduinoUrl).then((res)=>{
+          if(res._bodyText=='Connected'){
+            Arduino.getInstance().SetArduioUrl(arduinoUrl)
+            this.ArduinoUrl = arduinoUrl
+            this.props.navigation.navigate("Home")
+          }else{
+            this.setState({
+              'isConnected':false
+            }) 
+          }
+        })
+      }
+    })
+  }
+  
+  AutomaticlyConnect(arduinoUrl){
+    return new Promise((resolve, reject) =>{
+      setTimeout(() => {
+        resolve("not connected")
+      }, 5000)  
+      var url ='http://'+arduinoUrl+"/connect";
+        console.log(url)
+        this.setState({
+          'isConnected':true
+        }) 
+        fetch(url, {
+            method: 'POST',
+            headers: new Headers({
+                'Content-Type': 'application/x-www-form-urlencoded', // <-- Specifying the Content-Type
+            }),
+            body: JSON.stringify({Connect:""}) // <-- Post parameters
+        }).then((responseText)=>{
+          resolve(responseText)
+        })
+        .catch((error) => {
+          reject(error)
+          this.setState({
+            'isConnected':false
+          })
+        })
+      })
   }
   ConnectToArduino(arduinoUrl){
         var url ='http://'+arduinoUrl+"/connect";
@@ -30,8 +71,8 @@ export default class SearchModelPage extends React.Component  {
             body: JSON.stringify({Connect:""}) // <-- Post parameters
         })
         .then((responseText) => {
-          
-            if(responseText._bodyText=='Connected'){
+          if(responseText._bodyText=='Connected'){
+              Arduino.getInstance().SetArduioUrl(arduinoUrl)
               this.ArduinoUrl = arduinoUrl
               this.props.navigation.navigate("EditPage")
             }else{
@@ -53,6 +94,7 @@ export default class SearchModelPage extends React.Component  {
             }
         })
         .catch((error) => {
+          console.log(error)
           Alert.alert(
             " יש שגיאה בהתחברות לתשיתש הבית חכם",
             "לבדוק נכונות הכתובת ולנסות שוב ",

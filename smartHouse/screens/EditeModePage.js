@@ -10,6 +10,7 @@ import { SmartHouseDB } from '../DataBase/SmartHouseDB'
 import { Icon } from 'react-native-elements'
 import cloneDeep from 'lodash/cloneDeep';
 import { Switch } from 'react-native-gesture-handler';
+import { Arduino } from '../arduino/Arduino';
 
 export default class EditeModePage extends React.Component {
     constructor(props){
@@ -131,9 +132,9 @@ export default class EditeModePage extends React.Component {
         if(this.state.HouseModeName!="" && this.state.imageChange!=false && SqlArr.length>0){
             DBHandler=SmartHouseDB.getInstance()
             DBHandler.InsertHouseMode(this.state.HouseModeName,this.state.image,JSON.stringify(SqlArr)).then(()=>{
+                this.props.navigation.state.params.onGoBack();
                 this.props.navigation.goBack()
             })
-            this.SendModeCommand('192.168.3.120',reqArr)
         }else{
             Alert.alert(
                 " יש נתונים חסרים",

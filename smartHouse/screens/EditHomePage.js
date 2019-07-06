@@ -8,6 +8,7 @@ import Carousel from 'react-native-snap-carousel';
 import ImagePickerPluggin from '../Plugins/ImagePickerPluggin'
 import { SmartHouseDB } from '../DataBase/SmartHouseDB'
 import { Icon } from 'react-native-elements'
+import { Arduino } from '../arduino/Arduino';
 
 export default class EditHomePage extends React.Component {
     constructor(props) {
@@ -18,6 +19,7 @@ export default class EditHomePage extends React.Component {
         this.componentDidMount = this.componentDidMount.bind(this)
         this._renderItem=this._renderItem.bind(this)
         this.NextToEditeRoomsPage=this.NextToEditeRoomsPage.bind(this)
+        console.log(Arduino.getInstance())
     }
     onDoublePress = (sectionId) => {
         const time = new Date().getTime();

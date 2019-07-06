@@ -9,9 +9,13 @@ import EditRoomPage from '../screens/EditRoomPage'
 import SearchModelPage from '../screens/SearchModelPage'
 import DemoPage from '../screens/DemoPage'
 import EditeModePage from '../screens/EditeModePage'
+import DeviceDetails from '../screens/DeviceDetails'
 const AppNavigator = createStackNavigator({
   Home: {
     screen: MainTabNavigator,
+  },
+  DeviceDetails:{
+    screen:DeviceDetails
   },
   RoomPage:{
     screen:RoomPageScreen
@@ -35,7 +39,7 @@ const AppNavigator = createStackNavigator({
     screen:EditeModePage
   }
 },{
-  initialRouteName: 'EditPage',
+  initialRouteName: 'SearchModel',
 });
 
 export default createAppContainer(AppNavigator);

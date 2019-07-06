@@ -82,12 +82,12 @@ export  class Timer extends React.Component {
  
   SaveDeviceLogInfo(){
     const TimeStamp=this.props.timestamp
+    dateHandler=new MyDate()
     const DBHandler=SmartHouseDB.getInstance()
     const HHMMSS=this.state.hours_Counter+':'+this.state.minutes_Counter+':'+this.state.seconds_Counter
-    DBHandler.SaveDeviceLogInfo(this.state.deviceRegId,TimeStamp,HHMMSS);
-    DBHandler.getDeviceLogInfo().then((resul)=>{
-      console.log(resul)
-    })
+    constStrTime=this.state.hours_Counter+''+this.state.minutes_Counter+''+this.state.seconds_Counter
+    const timeNum = dateHandler.ConvertTimeToSeconds(constStrTime)
+    DBHandler.SaveDeviceLogInfo(this.state.deviceRegId,TimeStamp,HHMMSS,timeNum);
   }
   onButtonStop = () => {
     this.SaveDeviceLogInfo();

@@ -4,7 +4,7 @@
 
 ESP8266WebServer server(80);
  
-const char* ssid = "BeHappy";
+const char* ssid = "BeHappy1";
 const char* password =  "k1234565";
              //0,1,2,3,4,5, 6, 7, 8,9 ,10
 int state[16]=        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};

@@ -10,6 +10,7 @@ import ImagePickerPluggin from '../Plugins/ImagePickerPluggin'
 import { SmartHouseDB } from '../DataBase/SmartHouseDB'
 import { Icon } from 'react-native-elements'
 import RNPickerSelect from 'react-native-picker-select';
+import { Arduino } from '../arduino/Arduino';
 
 
 export default class EditRoomPage extends React.Component {
@@ -142,7 +143,8 @@ export default class EditRoomPage extends React.Component {
             BussyDevices._array.map((value,key)=>{
                 BussyDevicesArr.push(value.RegisterIndex);
             })
-            RegisterArr=this.GetAvailableRegister('192.168.3.120');
+            const url =  Arduino.getInstance().GetArduinoUrl()
+            RegisterArr=this.GetAvailableRegister(url);
             RegisterArr.then((result)=>{
                 resArr=[]
                 result.map((Dev,key)=>{

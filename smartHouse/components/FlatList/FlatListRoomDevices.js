@@ -3,6 +3,7 @@ import { StyleSheet, Image, Text, View, FlatList ,ActivityIndicator } from 'reac
 import { RoomCard } from '../RoomCard/RoomCard';
 import { SmartHouseDB } from '../../DataBase/SmartHouseDB'
 import  {PowerSwitch}  from '../RoomCard/PowerSwitch/PowerSwitch';
+import { Arduino } from '../../arduino/Arduino';
 export default class FlatListRoomDevices extends React.Component {
     constructor(props) {
         super(props)
@@ -89,8 +90,9 @@ export default class FlatListRoomDevices extends React.Component {
           
           return (result._array)
         }).then((DevArr)=>{
-            this.GetRegisterStatus('192.168.3.120').then((result)=>{
-                this.GetTimeStamp('192.168.3.120').then((stres)=>{
+            const url =  Arduino.getInstance().GetArduinoUrl();
+            this.GetRegisterStatus(url).then((result)=>{
+                this.GetTimeStamp(url).then((stres)=>{
                     DevArr.map((value,key)=>{
                         RegRoom=value.RegisterIndex
                         DevArr[key].Status=result[RegRoom]

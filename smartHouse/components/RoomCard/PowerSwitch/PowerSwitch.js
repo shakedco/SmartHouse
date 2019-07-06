@@ -3,6 +3,7 @@ import { StyleSheet, Image, Text, View,Switch, FlatList ,ActivityIndicator } fro
 import { Ionicons } from '@expo/vector-icons';
 import {Timer} from '../../Timer/Timer'
 import { MyDate } from '../../../Plugins/MyDate';
+import { Arduino } from '../../../arduino/Arduino';
 
 
 export class PowerSwitch extends React.Component {
@@ -54,7 +55,7 @@ export class PowerSwitch extends React.Component {
         })
         .then((response) => response.text())
         .then((responseText) => {
-            console.log(responseText)
+           
             // if(responseText=='Connected'){
             // //   this.props.navigation.navigate("EditPage")
             // }else{
@@ -72,7 +73,8 @@ export class PowerSwitch extends React.Component {
         //onValueChange of the switch this function will be called
         this.refs.child.ToggleTimer();
         this.setState({ SwitchStatus: value });
-        this.sendAjaxRequest("192.168.3.120")
+        const url =  Arduino.getInstance().GetArduinoUrl()
+        this.sendAjaxRequest(url)
         //state changes according to switch
         //which will result in re-render the text
       };

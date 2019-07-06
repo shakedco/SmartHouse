@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet,View,Button,FlatList,Text,Image } from 'react-na
 import { ExpoLinksView } from '@expo/samples';
 import { PowerSwitchModes } from '../components/RoomCard/PowerSwitch/PowerSwitchModes';
 import { SmartHouseDB } from '../DataBase/SmartHouseDB';
+import { Arduino } from '../arduino/Arduino';
 
 export default class LinksScreen extends React.Component {
   static navigationOptions = {
@@ -60,7 +61,7 @@ export default class LinksScreen extends React.Component {
                     title="הסרה"
                     onPress={data=>this.DeleteMode(data,item.id)}
                   />
-                  <PowerSwitchModes style={{flex:1}}/>
+                  <PowerSwitchModes ModeDetails={item} style={{flex:1}}/>
                 </View>
             </View>
           </View>
@@ -87,7 +88,9 @@ componentDidMount() {
   })
 }
   onPressLearnMore = (id)=>{
-      fetch('http://192.168.3.120')
+      const url =  Arduino.getInstance().GetArduinoUrl()
+      url="http://"+url
+      fetch(url)
       .then((response) => response.json())
       .then((responseJson) => {
         console.log(responseJson)
@@ -96,8 +99,13 @@ componentDidMount() {
         console.error(error);
       });
   }
+  refresh() {
+    this.componentDidMount();
+  }
   NavigateToEditePage(){
-    this.props.navigation.navigate("EditeModePage")
+    this.props.navigation.navigate("EditeModePage", {
+      onGoBack: () => this.refresh(),
+    })
   }
   render() {
     return (
